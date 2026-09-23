@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monitoring Kelengkapan Administrasi SNLIK 2026 - BPS Provinsi Kepulauan Bangka Belitung</title>
+<style>
+:root{
+  --navy:#0f3d56;--blue:#0e7490;--cyan:#06b6d4;--green:#16a34a;
+  --yellow:#d97706;--red:#dc2626;--bg:#f1f5f9;--card:#fff;
+  --line:#dbe4ec;--text:#0f172a;--muted:#64748b;--soft:#eef6f8
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,#0b3448,#0e7490);color:#fff;padding:24px 30px}
+header h1{margin:0;font-size:24px}
+header p{margin:7px 0 0;opacity:.9;font-size:13px}
+.wrap{max-width:1700px;margin:auto;padding:18px}
+.toolbar,.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 12px rgba(15,23,42,.06)}
+.toolbar{padding:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:170px}
+.field.grow{flex:1;min-width:240px}
+label{font-size:11px;font-weight:800;color:var(--muted)}
+select,input,button{font:inherit}
+select,input{border:1px solid #cbd5e1;border-radius:9px;padding:9px 11px;background:#fff}
+button{border:0;border-radius:9px;padding:10px 13px;cursor:pointer;font-weight:700}
+.btn{background:var(--navy);color:#fff}.btn.secondary{background:#e2e8f0;color:#0f172a}
+.btn.green{background:var(--green);color:#fff}.btn.red{background:var(--red);color:#fff}
+.status{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.dot{width:9px;height:9px;border-radius:50%;background:#94a3b8}.dot.ok{background:#22c55e}.dot.bad{background:#ef4444}
+.alert{display:none;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:12px 14px;border-radius:12px;margin-bottom:16px;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{padding:16px}.kpi .t{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase}.kpi .v{font-size:22px;font-weight:900;margin-top:6px}.kpi .s{font-size:11px;color:var(--muted);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+.card h2{font-size:15px;margin:0;padding:15px 16px;border-bottom:1px solid var(--line)}
+.cardbody{padding:15px}
+.tablewrap{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:#f8fafc;position:sticky;top:0;z-index:1;font-size:11px}
+.num{text-align:right;white-space:nowrap}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800;background:#e2e8f0}
+.badge.ok{background:#dcfce7;color:#166534}.badge.warn{background:#fef3c7;color:#92400e}.badge.bad{background:#fee2e2;color:#991b1b}
+.barrow{margin-bottom:12px}.barhead{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:5px}.bar{height:9px;background:#e2e8f0;border-radius:999px;overflow:hidden}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue))}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#e2e8f0;color:#334155}.tab.active{background:var(--navy);color:#fff}
+.tabpanel{display:none}.tabpanel.active{display:block}
+.small{font-size:11px;color:var(--muted)}
+.link{color:#0369a1;text-decoration:none;font-weight:700}.link:hover{text-decoration:underline}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.progress{display:inline-flex;align-items:center;gap:6px}.progress .mini{width:70px;height:7px;background:#e2e8f0;border-radius:10px;overflow:hidden}.progress .mini i{display:block;height:100%;background:var(--green)}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.grid2{grid-template-columns:1fr}}
+@media(max-width:650px){.kpis{grid-template-columns:repeat(2,1fr)}header{padding:20px}.wrap{padding:10px}}
+@media print{.toolbar,.tabs,footer,.status{display:none!important}.card{box-shadow:none}.tabpanel{display:block!important}.wrap{max-width:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Monitoring Kelengkapan Administrasi SNLIK Tahun 2026</h1>
+  <p>BPS Provinsi Kepulauan Bangka Belitung · Dashboard berbasis database Kertas Kerja Kelengkapan Administrasi</p>
+</header>
+
+<div class="wrap">
+  <div class="toolbar">
+    <div class="field">
+      <label>AKUN / JENIS BELANJA</label>
+      <select id="akun"><option value="">Semua akun</option></select>
+    </div>
+    <div class="field">
+      <label>STATUS DOKUMEN</label>
+      <select id="status">
+        <option value="">Semua status</option>
+        <option value="sesuai">Sesuai</option>
+        <option value="belum">Belum sesuai</option>
+        <option value="belum-monitor">Belum dimonitor</option>
+      </select>
+    </div>
+    <div class="field grow">
+      <label>PENCARIAN</label>
+      <input id="q" placeholder="Cari uraian transaksi, nama sheet, akun, atau keterangan...">
+    </div>
+    <button class="btn secondary" onclick="resetFilter()">Reset</button>
+    <button class="btn" onclick="loadData()">↻ Muat ulang</button>
+    <button class="btn" onclick="window.print()">Print / PDF</button>
+    <div class="status"><span id="dot" class="dot"></span><span id="apiStatus">Menghubungkan...</span></div>
+  </div>
+
+  <div id="alert" class="alert"></div>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="t">Total Anggaran</div><div id="kAnggaran" class="v">Rp 0</div><div class="s">Dari sheet Anggaran-Realisasi-Kesesuaian</div></div>
+    <div class="card kpi"><div class="t">Realisasi</div><div id="kRealisasi" class="v">Rp 0</div><div class="s">Total transaksi teridentifikasi</div></div>
+    <div class="card kpi"><div class="t">Sisa Anggaran</div><div id="kSisa" class="v">Rp 0</div><div class="s">Anggaran dikurangi realisasi</div></div>
+    <div class="card kpi"><div class="t">Transaksi</div><div id="kTransaksi" class="v">0</div><div class="s">Baris transaksi dari database</div></div>
+    <div class="card kpi"><div class="t">Sesuai</div><div id="kSesuai" class="v">0%</div><div class="s">Kesesuaian dokumen terisi</div></div>
+    <div class="card kpi"><div class="t">Perlu Tindak Lanjut</div><div id="kTL" class="v">0</div><div class="s">Belum sesuai / belum dimonitor</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Rekap Anggaran, Realisasi, dan Kesesuaian</h2>
+      <div class="cardbody tablewrap">
+        <table>
+          <thead><tr><th>Akun</th><th>Nama</th><th class="num">Anggaran</th><th class="num">Realisasi</th><th class="num">%</th><th class="num">Kesesuaian</th><th>Data Pendukung</th></tr></thead>
+          <tbody id="accountBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Progress Kesesuaian per Akun</h2>
+      <div class="cardbody" id="bars"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Monitoring Database Kelengkapan Administrasi</h2>
+    <div class="cardbody">
+      <div class="tabs">
+        <button class="tab active" data-tab="transaksi">Transaksi</button>
+        <button class="tab" data-tab="dokumen">Kelengkapan Dokumen</button>
+        <button class="tab" data-tab="sheet">Rekap Sheet</button>
+        <button class="tab" data-tab="prioritas">Prioritas Tindak Lanjut</button>
+      </div>
+
+      <div id="transaksi" class="tabpanel active">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>No</th><th>Sheet / Akun</th><th>Uraian Belanja</th><th class="num">Nilai</th><th>Jenis Pembayaran</th><th>No SPM</th><th>Status</th><th>Link</th></tr></thead>
+            <tbody id="trxBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="dokumen" class="tabpanel">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>No</th><th>Sheet / Akun</th><th>Uraian</th><th>Dokumen Diperiksa</th><th>Dokumen Terisi</th><th>Progress</th><th>Kesesuaian</th><th>Catatan</th></tr></thead>
+            <tbody id="docBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="sheet" class="tabpanel">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Nama Sheet</th><th class="num">Jumlah Transaksi</th><th class="num">Total Nilai</th><th class="num">Kesesuaian</th><th class="num">Progress</th></tr></thead>
+            <tbody id="sheetBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="prioritas" class="tabpanel">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Prioritas</th><th>Sheet / Akun</th><th>Uraian</th><th>Masalah</th><th>Catatan</th><th>Link</th></tr></thead>
+            <tbody id="priorityBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>SNLIK 2026 · BPS Provinsi Kepulauan Bangka Belitung · Sumber data: database Kertas Kerja Kelengkapan Administrasi</footer>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzH3F9T47va282lxw_SBmhMdctH9H2sw9oI6tVofvEqojMEQ7ccDSMQS2toSmk7DoRy/exec";
+
+let DB = {accounts:[], transactions:[], sheets:[]};
+let FILTERED = [];
+
+const $ = id => document.getElementById(id);
+const money = n => new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n)||0);
+const pct = n => (Number(n)||0).toLocaleString("id-ID",{maximumFractionDigits:1}) + "%";
+const num = n => new Intl.NumberFormat("id-ID").format(Number(n)||0);
+
+function esc(v){
+  return String(v ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function url(v){
+  const s=String(v??"").trim();
+  return /^https?:\/\//i.test(s) ? s : "";
+}
+function first(o,names){
+  for(const n of names){
+    if(o && o[n]!==undefined && o[n]!==null && o[n] !== "") return o[n];
+  }
+  return "";
+}
+function cleanNumber(v){
+  if(typeof v==="number") return v;
+  if(v===null||v===undefined||v==="") return 0;
+  let s=String(v).replace(/Rp/gi,"").replace(/\s/g,"");
+  if(s.includes(",") && s.includes(".")) s=s.replace(/\./g,"").replace(",",".");
+  else if(s.includes(",")) s=s.replace(",",".");
+  else if((s.match(/\./g)||[]).length>1) s=s.replace(/\./g,"");
+  const x=Number(s.replace(/[^0-9.-]/g,""));
+  return Number.isFinite(x)?x:0;
+}
+function normalizeStatus(v){
+  const s=String(v??"").trim().toLowerCase();
+  if(!s || s==="#ref!" || s==="#div/0!" || s==="0" || s==="belum") return "belum-monitor";
+  if(["sesuai","ok","complete","lengkap","1","100","100%"].includes(s)) return "sesuai";
+  return "belum";
+}
+function normalizePercent(v){
+  if(v===""||v===null||v===undefined||v==="#REF!"||v==="#DIV/0!") return 0;
+  let x=cleanNumber(v);
+  if(x>0 && x<=1) x*=100;
+  return Math.max(0,Math.min(100,x));
+}
+
+function setApi(ok,msg){
+  $("dot").className="dot "+(ok?"ok":"bad");
+  $("apiStatus").textContent=msg;
+}
+function showError(msg){
+  $("alert").style.display="block";
+  $("alert").innerHTML=esc(msg);
+}
+function hideError(){ $("alert").style.display="none"; }
+
+function rowsFromSheet(s){
+  if(!s) return [];
+  if(Array.isArray(s.rows)) return s.rows;
+  if(Array.isArray(s.data)) return s.data;
+  if(Array.isArray(s.values)){
+    const headers=s.headers||s.header||[];
+    return s.values.map(r=>Object.fromEntries((headers||[]).map((h,i)=>[h,r[i]])));
+  }
+  return [];
+}
+
+function normalizeApi(raw){
+  let data=raw;
+  if(raw && raw.data && typeof raw.data==="object") data=raw.data;
+  if(data && data.result && typeof data.result==="object") data=data.result;
+
+  let accounts=Array.isArray(data?.accounts)?data.accounts:[];
+  let transactions=Array.isArray(data?.transactions)?data.transactions:[];
+  let sheets=Array.isArray(data?.sheets)?data.sheets:[];
+
+  // Format: {sheets:[{name,headers,rows}]}
+  if(!transactions.length && sheets.length){
+    sheets.forEach(s=>{
+      const name=s.name||s.sheetName||s.title||"";
+      const rows=rowsFromSheet(s);
+      const isBudget=/Anggaran[- ]?Realisasi[- ]?Kesesuaian/i.test(name);
+      if(isBudget && !accounts.length){
+        rows.forEach(r=>{
+          const akun=first(r,["Akun","akun","Kode Akun","KODE_AKUN","B"]);
+          const nama=first(r,["Nama Akun","nama","Nama","C"]);
+          if(akun && String(akun).toLowerCase()!=="total"){
+            accounts.push({
+              akun:String(akun),nama:String(nama||""),
+              pagu:cleanNumber(first(r,["Anggaran (Rp)","Anggaran","Pagu","pagu","D"])),
+              realisasi:cleanNumber(first(r,["Realisasi","Realisasi (Rp)","realisasi","G"])),
+              kesesuaian:normalizePercent(first(r,["Kesesuaian Dokumen (%)","Kesesuaian","kesesuaian","I"])),
+              link:first(r,["Link Data Pendukung","link","K"] )||first(r,["Template SPJ","J"])
+            });
+          }
+        });
+      }else{
+        rows.forEach((r,i)=>{
+          const uraian=first(r,["Uraian Belanja per Transaksi","Uraian Belanja","uraian","B"]);
+          const nilai=cleanNumber(first(r,["Nilai Pembayaran (Bruto)","Nilai","nilai","C"]));
+          const no=first(r,["No","no","A"]);
+          if(uraian || nilai || (no && Number(no)>0)){
+            transactions.push({...r,__sheet:name,__row:i+1});
+          }
+        });
+      }
+    });
+  }
+
+  // Format: object keyed by sheet name
+  if(!transactions.length && data && typeof data==="object"){
+    Object.keys(data).forEach(name=>{
+      if(["accounts","transactions","sheets","success","message"].includes(name)) return;
+      const rows=Array.isArray(data[name])?data[name]:[];
+      rows.forEach((r,i)=>transactions.push({...r,__sheet:name,__row:i+1}));
+    });
+  }
+
+  // Normalize direct transactions
+  transactions=transactions.map((r,i)=>{
+    const sheet=first(r,["__sheet","sheet","sheetName","namaSheet","akunNama"]);
+    const akun=first(r,["akun","Akun","kodeAkun","Kode Akun","KODE_AKUN"]) || (sheet.match(/^(\d{6})/)||[])[1] || "";
+    const uraian=first(r,["uraian","Uraian","Uraian Belanja per Transaksi","Uraian Belanja","B"]);
+    const nilai=cleanNumber(first(r,["nilai","Nilai","Nilai Pembayaran (Bruto)","nilaiPembayaran","C"]));
+    const jenis=first(r,["jenisPembayaran","Jenis Pembayaran","D"]);
+    const noSpm=first(r,["noSPM","No SPM","E"]);
+    const link=first(r,["link","Link","F"]);
+    const kes=first(r,["kesesuaian","Kesesuaian Dokumen","Kesesuaian","X","Y","W"]);
+    const prog=first(r,["progress","Progress Monitoring","Z","Y","X","W"]);
+    const cat=first(r,["catatan","Catatan","notes","V","W"]);
+    return {...r,__sheet:sheet,__akun:String(akun||""),__uraian:String(uraian||""),
+      __nilai:nilai,__jenis:String(jenis||""),__spm:String(noSpm||""),
+      __link:String(link||""),__status:normalizeStatus(kes),__progress:normalizePercent(prog),
+      __catatan:String(cat||"")};
+  });
+
+  // If accounts absent, derive from transactions.
+  if(!accounts.length){
+    const map={};
+    transactions.forEach(t=>{
+      const key=t.__akun||t.__sheet;
+      if(!key) return;
+      if(!map[key]) map[key]={akun:key,nama:t.__sheet||key,pagu:0,realisasi:0,kesesuaian:0,link:"",_n:0};
+      map[key].realisasi += t.__nilai;
+      map[key]._n++;
+      if(t.__status==="sesuai") map[key].kesesuaian += 1;
+    });
+    accounts=Object.values(map).map(a=>({...a,kesesuaian:a._n?a.kesesuaian/a._n*100:0}));
+  }else{
+    accounts=accounts.map(a=>({
+      akun:String(first(a,["akun","Akun","kodeAkun","Kode Akun","B"])||""),
+      nama:String(first(a,["nama","Nama","Nama Akun","namaAkun","C"])||""),
+      pagu:cleanNumber(first(a,["pagu","Pagu","anggaran","Anggaran","Anggaran (Rp)","D"])),
+      realisasi:cleanNumber(first(a,["realisasi","Realisasi","Realisasi (Rp)","G"])),
+      kesesuaian:normalizePercent(first(a,["kesesuaian","Kesesuaian","Kesesuaian Dokumen (%)","I"])),
+      link:String(first(a,["link","Link Data Pendukung","K","Template SPJ","J"])||"")
+    }));
+  }
+
+  const sheetMap={};
+  transactions.forEach(t=>{
+    const n=t.__sheet||t.__akun||"Tanpa sheet";
+    if(!sheetMap[n]) sheetMap[n]={name:n,n:0,value:0,ok:0,progress:0};
+    sheetMap[n].n++; sheetMap[n].value+=t.__nilai;
+    if(t.__status==="sesuai") sheetMap[n].ok++;
+    sheetMap[n].progress+=t.__progress;
+  });
+  sheets=Object.values(sheetMap).map(s=>({...s,kesesuaian:s.n?s.ok/s.n*100:0,progress:s.n?s.progress/s.n:0}));
+
+  return {accounts,transactions,sheets};
+}
+
+async function loadData(){
+  hideError(); setApi(false,"Mengambil data...");
+  try{
+    const res=await fetch(API_URL+"?action=all&_="+Date.now(),{method:"GET",cache:"no-store"});
+    const text=await res.text();
+    let raw;
+    try{raw=JSON.parse(text)}catch(e){throw new Error("Respons Apps Script bukan JSON. Periksa doGet() dan deployment Web App.");}
+    if(raw && raw.success===false) throw new Error(raw.message||"Apps Script mengembalikan status gagal.");
+    DB=normalizeApi(raw);
+    setApi(true,"Terhubung · "+new Date().toLocaleTimeString("id-ID"));
+    initAkun();
+    render();
+  }catch(err){
+    console.error(err);
+    setApi(false,"Gagal terhubung");
+    showError("Gagal mengambil data dari Google Apps Script: "+err.message);
+    DB={accounts:[],transactions:[],sheets:[]};
+    initAkun(); render();
+  }
+}
+
+function initAkun(){
+  const el=$("akun"), old=el.value;
+  const vals=[...new Set(DB.accounts.map(a=>a.akun).filter(Boolean))];
+  el.innerHTML='<option value="">Semua akun</option>'+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+  if(vals.includes(old)) el.value=old;
+}
+function getFiltered(){
+  const akun=$("akun").value, status=$("status").value, q=$("q").value.trim().toLowerCase();
+  return DB.transactions.filter(t=>{
+    if(akun && t.__akun!==akun) return false;
+    if(status && t.__status!==status) return false;
+    if(q){
+      const hay=JSON.stringify(t).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function render(){
+  FILTERED=getFiltered();
+  renderKpi(); renderAccounts(); renderBars(); renderTransactions(); renderDocuments(); renderSheets(); renderPriority();
+}
+function renderKpi(){
+  const ang=DB.accounts.reduce((s,a)=>s+a.pagu,0);
+  const real=FILTERED.reduce((s,t)=>s+t.__nilai,0);
+  const n=FILTERED.length;
+  const ok=FILTERED.filter(t=>t.__status==="sesuai").length;
+  const tl=FILTERED.filter(t=>t.__status!=="sesuai").length;
+  $("kAnggaran").textContent=money(ang);
+  $("kRealisasi").textContent=money(real);
+  $("kSisa").textContent=money(ang-real);
+  $("kTransaksi").textContent=num(n);
+  $("kSesuai").textContent=pct(n?ok/n*100:0);
+  $("kTL").textContent=num(tl);
+}
+function renderAccounts(){
+  const body=$("accountBody");
+  if(!DB.accounts.length){body.innerHTML='<tr><td colspan="7" class="empty">Belum ada data akun.</td></tr>';return}
+  body.innerHTML=DB.accounts.map(a=>{
+    const p=a.pagu?Math.min(100,a.realisasi/a.pagu*100):0;
+    const l=url(a.link);
+    return `<tr>
+      <td><b>${esc(a.akun)}</b></td><td>${esc(a.nama)}</td>
+      <td class="num">${money(a.pagu)}</td><td class="num">${money(a.realisasi)}</td>
+      <td class="num">${pct(p)}</td><td class="num">${pct(a.kesesuaian)}</td>
+      <td>${l?`<a class="link" target="_blank" rel="noopener" href="${esc(l)}">Buka</a>`:"-"}</td>
+    </tr>`;
+  }).join("");
+}
+function renderBars(){
+  const arr=DB.accounts.filter(a=>a.nama||a.akun).slice().sort((a,b)=>b.kesesuaian-a.kesesuaian);
+  $("bars").innerHTML=arr.length?arr.map(a=>`<div class="barrow">
+    <div class="barhead"><span>${esc(a.akun)} · ${esc(a.nama)}</span><b>${pct(a.kesesuaian)}</b></div>
+    <div class="bar"><i style="width:${Math.max(0,Math.min(100,a.kesesuaian))}%"></i></div>
+  </div>`).join(""):'<div class="empty">Belum ada data.</div>';
+}
+function statusBadge(s){
+  if(s==="sesuai") return '<span class="badge ok">Sesuai</span>';
+  if(s==="belum") return '<span class="badge bad">Belum sesuai</span>';
+  return '<span class="badge warn">Belum dimonitor</span>';
+}
+function renderTransactions(){
+  const body=$("trxBody");
+  if(!FILTERED.length){body.innerHTML='<tr><td colspan="8" class="empty">Tidak ada transaksi sesuai filter.</td></tr>';return}
+  body.innerHTML=FILTERED.map((t,i)=>{
+    const l=url(t.__link);
+    return `<tr>
+      <td>${i+1}</td><td><b>${esc(t.__akun)}</b><br><span class="small">${esc(t.__sheet)}</span></td>
+      <td>${esc(t.__uraian||"-")}</td><td class="num">${money(t.__nilai)}</td>
+      <td>${esc(t.__jenis||"-")}</td><td>${esc(t.__spm||"-")}</td>
+      <td>${statusBadge(t.__status)}</td><td>${l?`<a class="link" target="_blank" rel="noopener" href="${esc(l)}">Buka</a>`:"-"}</td>
+    </tr>`;
+  }).join("");
+}
+function docFields(t){
+  const ignored=new Set(["A","B","C","D","E","F","No","Uraian Belanja per Transaksi","Nilai Pembayaran (Bruto)","Jenis Pembayaran","No SPM","Link"]);
+  return Object.entries(t).filter(([k,v])=>{
+    if(k.startsWith("__")||ignored.has(k)||v===""||v===null||v===undefined) return false;
+    return /SP2D|SPM|SPBy|DRPP|KAK|Surat|SPD|Presensi|Dokumentasi|Laporan|Rekap|Bukti|Kuitansi|SSP|PPN|PPh|Invoice|Daftar|Form|SK|Kontrak|Berita|Rencana|RAB|RUP|Pesanan|Undangan|Jadwal|Notulen|NPWP|Polis|Premi|BAST|BAPP|SPK|Perjanjian|Tiket|Transport/i.test(k);
+  });
+}
+function renderDocuments(){
+  const body=$("docBody");
+  if(!FILTERED.length){body.innerHTML='<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';return}
+  body.innerHTML=FILTERED.slice(0,300).map((t,i)=>{
+    const fields=docFields(t);
+    const filled=fields.filter(([,v])=>String(v).trim()!=="" && !["#REF!","#DIV/0!"].includes(String(v).trim())).length;
+    const total=Math.max(fields.length,1);
+    const p=filled/total*100;
+    return `<tr>
+      <td>${i+1}</td><td>${esc(t.__sheet)}</td><td>${esc(t.__uraian||"-")}</td>
+      <td class="num">${num(total)}</td><td class="num">${num(filled)}</td>
+      <td><span class="progress">${pct(p)} <span class="mini"><i style="width:${p}%"></i></span></span></td>
+      <td>${statusBadge(t.__status)}</td><td>${esc(t.__catatan||"-")}</td>
+    </tr>`;
+  }).join("");
+}
+function renderSheets(){
+  const body=$("sheetBody");
+  const map={};
+  FILTERED.forEach(t=>{
+    const n=t.__sheet||"Tanpa sheet";
+    if(!map[n])map[n]={n:0,v:0,ok:0,p:0};
+    map[n].n++;map[n].v+=t.__nilai;if(t.__status==="sesuai")map[n].ok++;map[n].p+=t.__progress;
+  });
+  const arr=Object.entries(map).map(([name,x])=>({name,...x,kes:x.n?x.ok/x.n*100:0,prog:x.n?x.p/x.n:0})).sort((a,b)=>b.v-a.v);
+  body.innerHTML=arr.length?arr.map(s=>`<tr><td>${esc(s.name)}</td><td class="num">${num(s.n)}</td><td class="num">${money(s.v)}</td><td class="num">${pct(s.kes)}</td><td class="num">${pct(s.prog)}</td></tr>`).join(""):'<tr><td colspan="5" class="empty">Belum ada data.</td></tr>';
+}
+function renderPriority(){
+  const body=$("priorityBody");
+  const arr=FILTERED.filter(t=>t.__status!=="sesuai").sort((a,b)=>b.__nilai-a.__nilai).slice(0,100);
+  body.innerHTML=arr.length?arr.map((t,i)=>{
+    const l=url(t.__link);
+    const masalah=t.__status==="belum-monitor"?"Belum ada status monitoring":"Dokumen belum sesuai";
+    return `<tr><td><b>${i+1}</b></td><td>${esc(t.__sheet)}</td><td>${esc(t.__uraian||"-")}</td><td>${masalah}</td><td>${esc(t.__catatan||"-")}</td><td>${l?`<a class="link" target="_blank" rel="noopener" href="${esc(l)}">Buka</a>`:"-"}</td></tr>`;
+  }).join(""):'<tr><td colspan="6" class="empty">Tidak ada tindak lanjut pada filter saat ini.</td></tr>';
+}
+
+function resetFilter(){
+  $("akun").value="";$("status").value="";$("q").value="";render();
+}
+$("akun").addEventListener("change",render);
+$("status").addEventListener("change",render);
+$("q").addEventListener("input",render);
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".tabpanel").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");$(b.dataset.tab).classList.add("active");
+}));
+loadData();
+</script>
+</body>
+</html>
